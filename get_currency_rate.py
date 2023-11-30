@@ -66,6 +66,10 @@ if __name__ == '__main__':
         print(f'Не удалось подключиться: {cre}')
     except pymysql.err.OperationalError as poe:
         print(f'Ошибка sql: {poe}')
+    except requests.exceptions.ConnectionError as rce:
+        print(f'Не удалось подключиться к сайту ЦБ: {rce}')
+    except KeyError as ke:
+        print(f'Ошибка ключа: {ke}')
 
     # dbhost = 'nadejnei.net'
     # db_use_r = 'student'
