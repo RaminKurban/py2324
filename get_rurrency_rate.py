@@ -1,7 +1,7 @@
 import requests
 import pymysql
 import datetime
-
+# cursor - гоняет данные между БД и заданием
 
 def get_data_from_cb(site):
     result = requests.get(site)
