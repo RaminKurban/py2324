@@ -2,19 +2,30 @@ import requests
 import pymysql
 import datetime
 import configparser
+import logging
+logging.basicConfig(filename= 'get_currency_rate.log', level = logging.DEBUG)
+
 
 
 # cursor - гоняет данные между БД и заданием
+# logging -  (журналирование)
 
 def get_data_from_config():
+
     config = configparser.ConfigParser()
     config.read('get_currency_rate.conf')
     db_host = config['database']['db_host']
+    logging.debug(f'{datetime.datetime.now()} Получил db_host - {db_host}')
     db_user = config['database']['db_user']
+    logging.debug(f'{datetime.datetime.now()} Получил db_user - {db_user}')
     db_password = config['database']['db_password']
+    logging.debug(f'{datetime.datetime.now()} Получил db_password - {db_password}')
     db_name = config['database']['db_name']
+    logging.debug(f'{datetime.datetime.now()} Получил db_name - {db_name}')
     db_port = int(config['database']['db_port'])
+    logging.debug(f'{datetime.datetime.now()} Получил db_port - {db_port}')
     cb_site = config['cb_site']['cb_site']
+    logging.debug(f'{datetime.datetime.now()} Получил cb_site - {cb_site}')
     return db_host, db_user, db_password, db_name, db_port, cb_site
 
 
@@ -54,9 +65,13 @@ if __name__ == '__main__':
     db_host, db_user, db_password, db_name, db_port, cb_site = get_data_from_config()
     data = get_data_from_cb(cb_site)
     try:
+        logging.info(f'{datetime.datetime.now()} Начинаю читать данные из конфига')
         db_host, db_user, db_password, db_name, db_port, cb_site = get_data_from_config()
+        logging.info(f'{datetime.datetime.now()} данные из конфига прочитаны')
+        logging.info(f'{datetime.datetime.now()} Начинаю получать данные из ЦБ')
 
         data = get_data_from_cb(cb_site)  # получил данные с сайта ЦБ в словарь
+
 
         connection, cursor = connect_to_db(db_host, db_user, db_password, db_name,
                                            db_port)  ## получили подключение и курсор к базе данных
