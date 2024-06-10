@@ -34,8 +34,8 @@ def get_data_from_cb(site):
     "http":"http://192.168.0.148:3128",
     "https": "http://192.168.0.148:3128" }
 
+    result = requests.get(site)
 
-    result = requests.get(site,proxies=proxies)
     valites = result.json()
     valutes_raw_dict = valites['Valute']
     clean_valute_dict = {}
