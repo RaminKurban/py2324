@@ -1,3 +1,4 @@
+from fastapi import FastAPI
 import pymysql
 import logging
 import datetime
@@ -71,31 +72,26 @@ def get_data_from_config():
     return db_host, db_user, db_password, db_name, db_port, redis_port, redis_pass, redis_host, redis_cache_time
 
 
-if __name__ == '__main__':
-    in_valute = input("Какую вылюту вы хотите обменять? ")
-    out_valute = input("Какую вылюту вы хотите получить? ")
-    in_valute_count = int(input("Сколько валюты вы хотите обменять! "))
-    start_time = datetime.datetime.now()
+app = FastAPI()
 
+
+@app.get("/obmen/")
+def obmen(val1, val2, count):
+    in_valute = val1
+    out_valute = val2
+    in_valute_count = int(count)
     db_host, db_user, db_password, db_name, db_port, redis_port, redis_pass, redis_host, redis_cache_time = get_data_from_config()
     redis_connection = connect_to_redis(redis_host, redis_port, redis_pass)
     in_valute_rate = get_from_redis(redis_connection, in_valute)
     out_valute_rate = get_from_redis(redis_connection, out_valute)
     if in_valute_rate and out_valute_rate:
         out_valute_count = exchange_valute(in_valute_rate, out_valute_rate, in_valute_count)
-        print('Данные получены из redis')
     else:
         connection, cursor = connect_to_db(db_host, db_user, db_password, db_name, db_port)
         in_valute_rate = get_valute_rate(connection, cursor, in_valute)
         out_valute_rate = get_valute_rate(connection, cursor, out_valute)
         connection.close()
-        set_to_redis(redis_connection,in_valute,in_valute_rate,3600)
+        set_to_redis(redis_connection, in_valute, in_valute_rate, 3600)
         set_to_redis(redis_connection, out_valute, out_valute_rate, 3600)
         out_valute_count = exchange_valute(in_valute_rate, out_valute_rate, in_valute_count)
-        set_to_redis(redis_connection, in_valute, in_valute_rate, redis_cache_time)
-        set_to_redis(redis_connection, out_valute, out_valute_rate, redis_cache_time)
-        print('Данные получены из БД')
-    end_time = datetime.datetime.now()
-    work_time = end_time - start_time
-    print(f'Вы получите {out_valute_count} {out_valute}. ')
-    print(work_time)
+    return f'Вы получите {out_valute_count} {out_valute}. '
