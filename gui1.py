@@ -1,8 +1,15 @@
 # подключаем библиотеки
-
-PySimpleGUI_License = 'eAyJJmMeaeWONrlsbbnINXlHVLHKl0wOZtStIn6ZIakmRblqdJmGVSsrba3DBEl7cCiQIFs1IekLxJpLY325VeuscT2QVuJlRDCbIq6PM3TtcjyaMVDWcMx3MjzcQyxoNmCbw6iBTVGUlUjAZkWz5UzyZwU6RglVcOGRxev9e4WB11lVbhnYRjWJZOXZJgzOaLWS92unIJjio3xqLRCyJcOcY2WN12l9RYmcl7yjcK3XQni5OeitJDSzYbWd1QpSbVixIXsIIGkN5fhebsWJVLMJYoXbNW0IIcj7oRiYS23PVSyuYHmkFXuKbw3gYEi1LAC5J8DVbh2S1dwxYoW1535cIojcofioIRiHwfi7QZ3qVwzDdRGV90t0ZfX5JQJSRAClI86fIzjOIK5hO1D5c50lIdiOwmiDRJGBFX0cZQUglzzAcg3ZVJlpZ1CvI46wIzjYAD3XL0zAEDxLLyznIxwAMljKQninLoCFJDEOY7X1RelGRgXJhbwya7XQJplccqyEIt61IojeAS3ZL6zOE0xyLvztIfwHMYjPU0icLvCXJ3FubfWTFCpKbAEEF2kqZcHdJGlwci3aMeiwOxiJJ6rqdNXFJ9ieYQWZ5UhfcU2Qx9hSb7kNBDtZYQW7lbsULNnWJS1WIciGwOiZSpViB6BTZVG3RvyPZvX0NMznINjToBiJOqTyQtuJMoTOkDuQMjTPU32mLij4UF2hInna0k=L5c5cd08cce4f5c1a40dac24040b169577ed3db33af2200717e414722a19d26ab199eff7d29ec26c92b033a67c03cf4ee8a83a560c4c5835a8b3f5ce0842cd961a83956d299d5ec041c2dac1b137246799975c7783855b2ef17e1cfabd31551b0aac49415ed3947995eb9cb9422beb61db65eaffb55e4a8c87d079dc5eff35ac62a7294d3a032f91b03ae6bb0db8535add665be5f4cec2f7bc49aa82b52680e263ff726137a4767c792df76e103c3274864226c45c0b0bf5c75a0cb13404d94782473103c91128784c58086ea430bb6fd32c1dea918d2e007bca439be2d509d69472fb49c86f20591d56ad9464a020ea67a4c5dfddce25e5f13d40dbd8b4606dc7bc38fe7725c644eeb2a7db23161a4849181c60c4bbf0a267565a5082e7cd39871aa5a216df4c26f5f6e325457322ee18212bca69b3b62cda8403847728260a9065c0b409d4da111587461a1575cc1f699caed7d188c8f36a737fdd31bdc78f7547f52e7ef82affa9c8dcef57f438c8e8f2c4c6bc4dd7eacfa117c260582efa5da59ca3bbb39cbc38b9e98ac904f4b848feca2df4b7067cdc03d5b143feef14ec4c82fc130e05fc22feee9e98ac3fd2f90e6ea25b8784ca7b22cd88229dd9319316fdeaf58d769ffae069aab4388b33561f492b1fbb4c12793edaa26d9b7fea40e59a038cc9fe9e244b7d805d0032be42e6719c8899d2a34224e5d9c97f85fdf'
 import PySimpleGUI as sg
 import random
+
+def update():
+    # получаем новое случайное число
+    r = random.randint(1,100)
+    # получаем доступ к текстовому элементу
+    text_elem = window['-text-']
+    # выводим в него текст с новым числом
+    text_elem.update("Результат: {}".format(r))
+
 
 # что будет внутри окна
 # первым описываем кнопку и сразу указываем размер шрифта
@@ -19,6 +26,7 @@ while True:
     if event in (sg.WIN_CLOSED, 'Exit'):
         # выходим из цикла
         break
+    if event =='-FUNCTION-':
+        update()
 # закрываем окно и освобождаем используемые ресурсы
 window.close()
-
