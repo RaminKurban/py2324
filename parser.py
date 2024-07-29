@@ -10,4 +10,3 @@ emails = re.findall(r'\w+@\w+.\w+',text)
 print(emails)
 
 
-

@@ -1,9 +1,13 @@
 import PySimpleGUI as sg
 import requests
+import matplotlib.pyplot as plt
+import sys
+import hashlib
+
 
 
 def get_ovcount_from_api(iv, ov, count):
-    apiurl = f'http://192.168.0.89:8080/obmen?val1={iv}&val2={ov}&count={count}'
+    apiurl = f'http://192.168.218.233:8080/obmen?val1={iv}&val2={ov}&count={count}'
     result = requests.get(apiurl)
     result_sring = result.text
     result_elem = window['result']
@@ -30,12 +34,35 @@ layout = [[sg.Text("Первая валюта:", font='Helvetica 16'), sg.InputT
 layout2 = [[sg.InputText('Введите валюту', font='Helvetica 16'), sg.InputText('Начало периода', font='Helvetica 16'),
             sg.InputText('Конец периода!', font='Helvetica 16')],
            [sg.Button('Построить график', font='Helvetica 16', enable_events=True, key='draw')],
-           [sg.Canvas(key='canvas', size=(1000, 500), background_color="white")],
+           #[sg.Canvas(key='canvas', size=(1500,800), background_color="white")],
            [sg.Button('Закрыть окно', font='Helvetica 16', enable_events=True, key='close_plot')]
            ]
+layout3 = [[sg.Text("Введите логин:", font='Helvetica 16'), sg.InputText(font='Helvetica 16', key='login')],
+            [sg.Text("Введите пароль:", font='Helvetica 16'), sg.InputText(font='Helvetica 16', key='pass')],
+            [sg.Button('OK', font='Helvetica 16', enable_events=True, key='enter_login')]
+           ]
+
 window = sg.Window("Обменник валют.", layout)
 
+
+auth = False
 while True:
+    if not auth:
+        auth_window = sg.Window("Аутентификация", layout3)
+        window.Hide()
+        auth_events, auth_values = auth_window.read()
+        print(auth_values)
+
+        h_passwd = hashlib.sha256(auth_values['pass'].encode()).hexdigest()
+        if auth_values['login'] == 'Ilya' and h_passwd == "2926a2731f4b312c08982cacf8061eb14bf65c1a87cc5d70e864e079c6220731":
+            auth_window.hide()
+            auth = True
+            pass
+        else:
+            sys.exit(1)
+
+
+
     # получаем события, произошедшие в окне
     event, values = window.read()
     # если нажали на крестик
@@ -57,6 +84,29 @@ while True:
                 window2.close()
                 window.UnHide()
                 break
+            if event2 == 'draw':
+                val = values2[0]
+                start_date = values2[1]
+                end_date = values2[2]
+                result = requests.get(
+                    f'http://192.168.218.233:8080/plot?val={val}&start_date={start_date}&end_date={end_date}')
+                raw_points = result.json()
+                dates = []
+                rates = []
+
+                for pl in raw_points:
+                    dates.append(pl[0])
+                    rates.append(float(pl[1]))
+                plt.xlabel("Даты")
+                plt.ylabel('Курс в рублях')
+                plt.title(f'Курс валюты {val} от {start_date} до {end_date}')
+                # plt.legend("123432523523")
+                plt.plot(dates, rates)
+                #plt.bar(dates, rates)
+                plt.show()
+
+
+
 
 # закрываем окно и освобождаем используемые ресурсы
 window.close()
